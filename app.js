@@ -13,15 +13,22 @@ const cors = require("cors")
 
 const app = express();
 app.use(cors())
+
 const port = 3005;
 
+const DB_URI = (process.env.NODE_ENV === 'test')
+  ? process.env.TEST_DB_URI
+  : process.env.DB_URI
+
+console.log(DB_URI)
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/books-Dipesh")
+  .connect(DB_URI)
   .then(() => {
     console.log("Connected to MongoDB server");
-    app.listen(port, () => {
-      console.log(`App is running in ${port}`);
-    });
+    // app.listen(port, () => {
+    //   console.log(`App is running in ${port}`);
+    // });
   })
   .catch((err) => next(err)); 
 
@@ -56,6 +63,8 @@ app.use((err, req, res, next) => {
   if (res.statusCode == 200) res.status(500)
   res.json({ err: err.message });
 });
+
+module.exports = app
 
 // app.get('/books', (req, res) => {
 //     res.send("Create a book")
